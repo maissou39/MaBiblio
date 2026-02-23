@@ -23,7 +23,7 @@ fun AddEditBookScreen(
     bookId: Int = 0,
     viewModel: BookViewModel,
     onBackClick: () -> Unit,
-    onAddAuthorClick: () -> Unit 
+    onAddAuthorClick: () -> Unit
 ) {
     val coroutineScope = rememberCoroutineScope()
     val authors by viewModel.authors.collectAsState()
@@ -105,38 +105,48 @@ fun AddEditBookScreen(
             // Sélection de l'auteur
             Row(verticalAlignment = Alignment.CenterVertically) {
                 var expanded by remember { mutableStateOf(false) }
+
+
+                //Liste Deroulante des auteurs
                 ExposedDropdownMenuBox(
                     expanded = expanded,
                     onExpandedChange = { expanded = !expanded },
                     modifier = Modifier.weight(1f)
                 ) {
-                    OutlinedTextField(
+                    OutlinedTextField( // Champs de saisie
+
+                        //On affiche le nom et le prénom de l'auteur qui existe deja si on en a pas on affiche rien -> ""
                         value = authors.find { it.id == selectedAuthorId }?.let { "${it.prenom} ${it.nom}" } ?: "",
-                        onValueChange = {},
-                        readOnly = true,
+                        onValueChange = {}, //fonction vide car l'user va juste choisir le nom de l'auteur
+                        readOnly = true, //l'utilisateur ne tape rien, il choisit
                         label = { Text("Auteur") },
-                        trailingIcon = { ExposedDropdownMenuDefaults.TrailingIcon(expanded = expanded) },
-                        modifier = Modifier.menuAnchor(),
-                        isError = authorError
+                        trailingIcon = { ExposedDropdownMenuDefaults.TrailingIcon(expanded = expanded) }, //icon triangle qui change lorsquon ouvre/ferme la liste
+                        modifier = Modifier.menuAnchor(), //liaison du champs au menu deroulant
+
                     )
-                    ExposedDropdownMenu(expanded = expanded, onDismissRequest = { expanded = false }) {
-                        authors.forEach { author ->
+
+                    ExposedDropdownMenu( //Menu deroulant
+                        expanded = expanded,  //controle si menu ouvert/fermer
+                        onDismissRequest = {
+                            expanded = false //ferme le menu si l'user clique en dehors
+                        }) {
+                        authors.forEach { author ->   //Boucle qui crée un élément de menu pour chaque auteur
                             DropdownMenuItem(
-                                text = { Text("${author.prenom} ${author.nom}") },
+                                text = { Text("${author.prenom} ${author.nom}") }, //affiche les auteurs
                                 onClick = {
-                                    selectedAuthorId = author.id
-                                    expanded = false
+                                    selectedAuthorId = author.id //enregistre l'id de l'auteur choisi
+                                    expanded = false //ferme le menu
                                 }
                             )
                         }
                     }
                 }
+                //Bouton "+" pour ajouter un auteur
                 IconButton(onClick = onAddAuthorClick) {
                     Icon(Icons.Default.Add, contentDescription = "Ajouter un auteur")
                 }
             }
 
-            // Ligne 126 fixée
             BasicInputField(
                 value = publicationYear, 
                 onValueChange = { publicationYear = it }, 

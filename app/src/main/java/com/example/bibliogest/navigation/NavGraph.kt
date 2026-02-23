@@ -14,6 +14,7 @@ import com.example.bibliogest.ui.bookdetailscreen.BookDetailScreen
 import com.example.bibliogest.ui.booklistscreen.BookListScreen
 import com.example.bibliogest.ui.addbookscreen.AddEditBookScreen
 import com.example.bibliogest.ui.addauthorscreen.AddAuthorScreen
+import com.example.bibliogest.ui.favoritescreen.FavoriteBooksScreen
 
 
 // Routes de navigation
@@ -22,6 +23,8 @@ const val BOOK_DETAIL_ROUTE = "book_detail"
 const val ADD_BOOK_ROUTE = "add_book"
 const val EDIT_BOOK_ROUTE = "edit_book"
 const val ADD_AUTHOR_ROUTE = "add_author"
+const val FAVORITES_ROUTE = "favorites"
+
 
 @Composable
 fun NavGraph(navController: NavHostController = rememberNavController()) {
@@ -37,14 +40,27 @@ fun NavGraph(navController: NavHostController = rememberNavController()) {
             BookListScreen(
                 viewModel = bookViewModel,
                 onBookClick = { bookId ->
-
                     navController.navigate("$BOOK_DETAIL_ROUTE/$bookId")
                 },
                 onAddClick = {
                     navController.navigate(ADD_BOOK_ROUTE)
+                },
+                onFavoritesClick = {
+                    navController.navigate(FAVORITES_ROUTE)
                 }
             )
         }
+
+        composable(route = FAVORITES_ROUTE) {
+            FavoriteBooksScreen(
+                viewModel = bookViewModel,
+                onBookClick = { bookId ->
+                    navController.navigate("$BOOK_DETAIL_ROUTE/$bookId")
+                },
+                onBackClick = { navController.popBackStack() }
+            )
+        }
+
         // Route: Ajout d'un livre
         composable(route = ADD_BOOK_ROUTE) {
             AddEditBookScreen(
@@ -89,6 +105,5 @@ fun NavGraph(navController: NavHostController = rememberNavController()) {
                 onAuthorAdded = { navController.popBackStack() }
             )
         }
-
     }
 }

@@ -5,10 +5,12 @@ import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Add
+import androidx.compose.material.icons.filled.Favorite
 import androidx.compose.material3.Divider
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.FloatingActionButton
 import androidx.compose.material3.Icon
+import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
@@ -25,7 +27,10 @@ import com.example.bibliogest.ui.components.EmptyView
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun BookListScreen(
-    viewModel: BookViewModel, onBookClick: (Int) -> Unit, onAddClick: () -> Unit
+    viewModel: BookViewModel,
+    onBookClick: (Int) -> Unit,
+    onAddClick: () -> Unit,
+    onFavoritesClick: () -> Unit
 ) {
     val books by viewModel.books.collectAsState()
 
@@ -36,6 +41,15 @@ fun BookListScreen(
                 containerColor = MaterialTheme.colorScheme.primary,
                 titleContentColor = MaterialTheme.colorScheme.onPrimary,
             ),
+            actions = {
+                IconButton(onClick = onFavoritesClick) {
+                    Icon(
+                        imageVector = Icons.Default.Favorite,
+                        contentDescription = "Favoris",
+                        tint = MaterialTheme.colorScheme.onPrimary
+                    )
+                }
+            }
         )
     }, floatingActionButton = {
         FloatingActionButton(
@@ -44,14 +58,13 @@ fun BookListScreen(
             Icon(Icons.Filled.Add, contentDescription = "Ajouter un livre")
         }
     }) { paddingValues ->
-        if (books.isEmpty()) { //si la liste est vide
+        if (books.isEmpty()) {
             EmptyView(
                 text = "\uD83D\uDCDA\nVotre bibliothèque est vide",
                 onButtonClick = onAddClick,
                 paddingValues = paddingValues,
             )
         } else {
-            // Afficher la liste des livres
             LazyColumn(
                 modifier = Modifier
                     .fillMaxSize()
